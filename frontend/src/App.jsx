@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
+
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 const products = [
   { id: 1, name: 'Linen day shirt', category: 'Apparel', price: 68, color: 'sage', badge: 'New in' },
@@ -21,7 +23,7 @@ function App() {
     wishlist: <WishlistPage items={products.filter((product) => wishlist.includes(product.id))} onAdd={addToCart} onProduct={navigate} />,
     cart: <CartPage items={cart} onShop={() => navigate('shop')} />,
     signup: <AccountPage mode="signup" onSwitch={() => navigate('signin')} />,
-    signin: <AccountPage mode="signin" onSwitch={() => navigate('signup')} />,
+    signin: <AccountPage mode="signin" onSwitch={() => navigate('signup')} onSignedIn={() => navigate('shop')} />,
     reset: <ResetPasswordPage onBack={() => navigate('signin')} />,
   }[page]
 
@@ -42,7 +44,61 @@ function WishlistPage({ items, onAdd, onProduct }) { return <section className="
 
 function CartPage({ items, onShop }) { const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0); return <section className="content-page cart-page"><div className="page-heading"><p className="eyebrow">Your selection</p><h1>Shopping bag</h1></div>{items.length ? <div className="cart-layout"><div className="cart-items">{items.map((item) => <div className="cart-item" key={item.id}><div className={`cart-thumb ${item.color}`}><span className="product-shape" /></div><div><p className="eyebrow">{item.category}</p><h3>{item.name}</h3><p>Qty {item.quantity}</p></div><strong>${item.price * item.quantity}</strong></div>)}</div><aside className="summary"><p className="eyebrow">Order summary</p><div><span>Subtotal</span><strong>${total}</strong></div><div><span>Delivery</span><span>Calculated at checkout</span></div><button className="primary-button full">Checkout <span>→</span></button></aside></div> : <EmptyState label="Continue shopping" onClick={onShop} />}</section> }
 
-function AccountPage({ mode, onSwitch }) { const signup = mode === 'signup'; return <section className="auth-page"><div className="auth-panel"><p className="eyebrow">{signup ? 'A considered beginning' : 'Welcome back'}</p><h1>{signup ? 'Create your account' : 'Sign in to Morrow'}</h1><p className="auth-intro">{signup ? 'Save your favorites, track your orders, and stay close to the good stuff.' : 'Your saved pieces are waiting.'}</p><form onSubmit={(event) => event.preventDefault()}>{signup && <label>Full name<input type="text" placeholder="Your name" /></label>}<label>Email address<input type="email" placeholder="you@example.com" /></label><label>Password<input type="password" placeholder="••••••••" /></label>{!signup && <button className="forgot" type="button">Forgot password?</button>}<button className="primary-button full" type="submit">{signup ? 'Create account' : 'Sign in'} <span>→</span></button></form><p className="switch-copy">{signup ? 'Already have an account?' : 'New to Morrow?'} <button onClick={onSwitch}>{signup ? 'Sign in' : 'Create an account'}</button></p></div><div className="auth-art"><div className="auth-circle" /><p>Made slowly.<br />Kept dearly.</p></div></section> }
+function AccountPage({ mode, onSwitch, onSignedIn }) { const signup = mode === 'signup'; return <section className="auth-page"><div className="auth-panel"><p className="eyebrow">{signup ? 'A considered beginning' : 'Welcome back'}</p><h1>{signup ? 'Create your account' : 'Sign in to Morrow'}</h1><p className="auth-intro">{signup ? 'Save your favorites, track your orders, and stay close to the good stuff.' : 'Your saved pieces are waiting.'}</p>{!signup && <><GoogleSignInButton onSignedIn={onSignedIn} /><div className="auth-divider"><span>or continue with email</span></div></>}<form onSubmit={(event) => event.preventDefault()}>{signup && <label>Full name<input type="text" placeholder="Your name" /></label>}<label>Email address<input type="email" placeholder="you@example.com" /></label><label>Password<input type="password" placeholder="••••••••" /></label>{!signup && <button className="forgot" type="button">Forgot password?</button>}<button className="primary-button full" type="submit">{signup ? 'Create account' : 'Sign in'} <span>→</span></button></form><p className="switch-copy">{signup ? 'Already have an account?' : 'New to Morrow?'} <button onClick={onSwitch}>{signup ? 'Sign in' : 'Create an account'}</button></p></div><div className="auth-art"><div className="auth-circle" /><p>Made slowly.<br />Kept dearly.</p></div></section> }
+
+function GoogleSignInButton({ onSignedIn }) {
+  const buttonRef = useRef(null)
+  const [error, setError] = useState('')
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
+    if (!clientId) {
+      setError('Google sign-in is not configured yet.')
+      return undefined
+    }
+
+    const renderButton = () => {
+      if (!window.google?.accounts?.id || !buttonRef.current) return
+      window.google.accounts.id.initialize({
+        client_id: clientId,
+        callback: async ({ credential }) => {
+          try {
+            const response = await fetch(`${apiUrl}/auth/google`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ credential }),
+            })
+            const result = await response.json()
+            if (!response.ok) throw new Error(result.error || 'Google sign-in failed')
+            localStorage.setItem('morrow_session', JSON.stringify(result))
+            onSignedIn()
+          } catch (requestError) {
+            setError(requestError.message)
+          }
+        },
+      })
+      window.google.accounts.id.renderButton(buttonRef.current, { theme: 'outline', size: 'large', width: 320, text: 'continue_with' })
+      setReady(true)
+    }
+
+    if (window.google?.accounts?.id) {
+      renderButton()
+      return undefined
+    }
+
+    const script = document.createElement('script')
+    script.src = 'https://accounts.google.com/gsi/client'
+    script.async = true
+    script.defer = true
+    script.onload = renderButton
+    script.onerror = () => setError('Google sign-in could not load. Check your connection.')
+    document.head.appendChild(script)
+    return () => script.remove()
+  }, [])
+
+  return <div className="google-signin">{!ready && <div className="google-brand"><span className="google-logo" aria-hidden="true">G</span><span>Continue with Google</span></div>}<div ref={buttonRef} />{error && <p className="auth-error">{error}</p>}</div>
+}
 
 function ResetPasswordPage({ onBack }) { return <section className="auth-page"><div className="auth-panel"><p className="eyebrow">A fresh start</p><h1>Reset password</h1><p className="auth-intro">Enter your email and we’ll send a link to set a new password.</p><form onSubmit={(event) => event.preventDefault()}><label>Email address<input type="email" placeholder="you@example.com" /></label><button className="primary-button full" type="submit">Send reset link <span>→</span></button></form><button className="text-button" onClick={onBack}>← Back to sign in</button></div><div className="auth-art reset-art"><div className="auth-circle" /><p>Take your time.</p></div></section> }
 function EmptyState({ label, onClick }) { return <div className="empty-state"><span className="empty-mark">+</span><p>Nothing here yet.</p><button className="text-button" onClick={onClick}>{label} <span>→</span></button></div> }
