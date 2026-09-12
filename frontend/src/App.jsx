@@ -2,6 +2,7 @@ import { createContext, useContext, useState } from 'react'
 import { createAuthClient } from 'better-auth/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import './App.css'
+import AiChat from './AiChat.jsx'
 
 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 const authClient = createAuthClient({ baseURL: apiUrl })
@@ -96,6 +97,7 @@ function App() {
   }[page]
 
   return <div className="app-shell">
+    <AiChat />
     <div className="announcement">{t.announcement} <span>+</span> {t.returns}</div>
     <header className="site-header"><button className="wordmark" onClick={() => navigate('shop')}>Morrow<span>.</span></button><nav className="main-nav"><button className={page === 'shop' ? 'active' : ''} onClick={() => navigate('shop')}>{t.shop}</button><button onClick={() => navigate('shop')}>{t.newIn}</button><button onClick={() => navigate('shop')}>{t.journal}</button></nav><div className="header-actions"><button className="language-button" aria-label={t.language} title={t.language} onClick={() => setLanguage(language === 'en' ? 'sw' : 'en')}>🌐 <span>{language === 'en' ? 'SW' : 'EN'}</span></button><button className="icon-button" onClick={() => navigate('signin')}>◎</button><button className="icon-button" onClick={() => navigate('wishlist')}>♡<small>{wishlist.length}</small></button><button className="cart-button" onClick={() => navigate('cart')}>{t.bag} <span>{cart.reduce((sum, item) => sum + item.quantity, 0)}</span></button><button className="manage-button" onClick={() => navigate('manage')}>+</button></div></header>
     <main>{pageContent}</main><footer><span>Morrow.</span><p>{t.footer}</p><button onClick={() => navigate('signup')}>{t.join}</button></footer>
