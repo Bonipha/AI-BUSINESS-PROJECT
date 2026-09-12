@@ -12,4 +12,4 @@ function validateShop(request, response, next) {
   return next();
 }
 
-module.exports = { validateShop };
+export { validateShop };

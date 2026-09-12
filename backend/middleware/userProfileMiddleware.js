@@ -9,4 +9,4 @@ function validateUserProfile(request, response, next) {
   return next();
 }
 
-module.exports = { validateUserProfile };
+export { validateUserProfile };

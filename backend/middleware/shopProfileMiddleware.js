@@ -9,4 +9,4 @@ function validateShopProfile(request, response, next) {
   return next();
 }
 
-module.exports = { validateShopProfile };
+export { validateShopProfile };

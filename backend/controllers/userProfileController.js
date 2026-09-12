@@ -1,5 +1,6 @@
-const { ObjectId } = require('mongodb');
-const { connectDatabase } = require('../database');
+import { ObjectId } from 'mongodb';
+import { connectDatabase } from '../database.js';
+import { uploadImage } from './cloudinaryController.js';
 
 async function getUserProfile(userId) {
   const database = await connectDatabase();
@@ -20,4 +21,9 @@ async function upsertUserProfile(userId, profile) {
   return getUserProfile(userId);
 }
 
-module.exports = { getUserProfile, upsertUserProfile };
+async function updateUserProfilePicture(userId, image) {
+  const avatarUrl = (await uploadImage({ image, folder: 'ai-project/user-profiles' })).url;
+  return upsertUserProfile(userId, { avatarUrl });
+}
+
+export { getUserProfile, updateUserProfilePicture, upsertUserProfile };

@@ -10,4 +10,4 @@ function requireAdmin(request, response, next) {
   return next();
 }
 
-module.exports = { requireAdmin };
+export { requireAdmin };

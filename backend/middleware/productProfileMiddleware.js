@@ -12,4 +12,4 @@ function validateProductProfile(request, response, next) {
   return next();
 }
 
-module.exports = { validateProductProfile };
+export { validateProductProfile };

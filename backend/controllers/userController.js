@@ -1,6 +1,6 @@
-const { ObjectId } = require('mongodb');
-const { connectDatabase } = require('../database');
-const { hashPassword } = require('../bcrypt');
+import { ObjectId } from 'mongodb';
+import { connectDatabase } from '../database.js';
+import { hashPassword } from '../bcrypt.js';
 
 async function createUser({ email, password, name = '', role = 'customer' }) {
   if (!email || !password) throw new Error('Email and password are required');
@@ -50,4 +50,4 @@ async function deleteUser(id) {
   return result.deletedCount === 1;
 }
 
-module.exports = { createUser, deleteUser, getUserById, updateUser };
+export { createUser, deleteUser, getUserById, updateUser };

@@ -17,4 +17,4 @@ const shopProfileSchema = {
   },
 };
 
-module.exports = { shopProfileSchema };
+export { shopProfileSchema };

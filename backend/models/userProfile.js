@@ -17,4 +17,4 @@ const userProfileSchema = {
   },
 };
 
-module.exports = { userProfileSchema };
+export { userProfileSchema };

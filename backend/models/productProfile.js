@@ -22,4 +22,4 @@ const productProfileSchema = {
   },
 };
 
-module.exports = { productProfileSchema };
+export { productProfileSchema };

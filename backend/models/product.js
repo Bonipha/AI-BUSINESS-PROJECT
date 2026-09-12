@@ -36,4 +36,4 @@ function productCollectionOptions() {
   };
 }
 
-module.exports = { productCollectionOptions, productSchema };
+export { productCollectionOptions, productSchema };

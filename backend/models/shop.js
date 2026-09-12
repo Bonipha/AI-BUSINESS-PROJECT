@@ -36,4 +36,4 @@ function shopCollectionOptions() {
   };
 }
 
-module.exports = { shopCollectionOptions, shopSchema };
+export { shopCollectionOptions, shopSchema };

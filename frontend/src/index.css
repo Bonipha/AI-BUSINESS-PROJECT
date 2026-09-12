@@ -3,3 +3,12 @@
 body { margin: 0; min-width: 320px; }
 button, input { font: inherit; }
 button { cursor: pointer; }
+.password-field { display: flex; align-items: center; border-bottom: 1px solid #bfb9ad; }
+.password-field input { flex: 1; border-bottom: 0; }
+.password-toggle { border: 0; background: transparent; color: #817c70; padding: 8px 0 8px 10px; font-size: 16px; line-height: 1; }
+.password-toggle:hover { color: #c17145; }
+.product-form { max-width: 520px; display: grid; gap: 18px; }
+.product-form label { display: grid; gap: 7px; color: #6f6a60; font-size: 11px; }
+.product-form input, .product-form textarea { border: 0; border-bottom: 1px solid #bfb9ad; background: transparent; padding: 10px 0; color: #20211d; outline: none; }
+.product-form textarea { min-height: 90px; resize: vertical; border: 1px solid #bfb9ad; padding: 10px; }
+.product-form input:focus, .product-form textarea:focus { border-color: #c17145; }

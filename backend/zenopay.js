@@ -67,7 +67,7 @@ async function getPaymentStatus(orderId) {
   return request(path, { method: 'GET' });
 }
 
-module.exports = {
+export {
   createPayment,
   getPaymentStatus,
 };

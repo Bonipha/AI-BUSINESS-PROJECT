@@ -16,4 +16,4 @@ function validateProduct(request, response, next) {
   return next();
 }
 
-module.exports = { validateProduct };
+export { validateProduct };

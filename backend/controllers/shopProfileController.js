@@ -1,5 +1,5 @@
-const { ObjectId } = require('mongodb');
-const { connectDatabase } = require('../database');
+import { ObjectId } from 'mongodb';
+import { connectDatabase } from '../database.js';
 
 async function getShopProfile(shopId) {
   const database = await connectDatabase();
@@ -20,4 +20,4 @@ async function upsertShopProfile(shopId, profile) {
   return getShopProfile(shopId);
 }
 
-module.exports = { getShopProfile, upsertShopProfile };
+export { getShopProfile, upsertShopProfile };

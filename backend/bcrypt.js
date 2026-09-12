@@ -1,4 +1,4 @@
-const bcrypt = require('bcryptjs');
+import bcrypt from 'bcryptjs';
 
 const saltRounds = Number(process.env.BCRYPT_SALT_ROUNDS) || 12;
 
@@ -18,7 +18,7 @@ async function comparePassword(password, passwordHash) {
   return bcrypt.compare(password, passwordHash);
 }
 
-module.exports = {
+export {
   comparePassword,
   hashPassword,
 };

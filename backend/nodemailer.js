@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
 const smtpPort = Number(process.env.SMTP_PORT) || 587;
 
@@ -37,7 +37,7 @@ async function verifyEmailTransporter() {
   return transporter.verify();
 }
 
-module.exports = {
+export {
   sendSignupEmail,
   verifyEmailTransporter,
 };

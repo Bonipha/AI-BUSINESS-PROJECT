@@ -1,4 +1,7 @@
-const { MongoClient } = require('mongodb');
+import dotenv from 'dotenv';
+import { MongoClient } from 'mongodb';
+
+dotenv.config({ path: new URL('./.env', import.meta.url), override: true });
 
 const mongoUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017';
 const databaseName = process.env.MONGO_DB || 'ai_project';
@@ -21,7 +24,7 @@ async function closeDatabase() {
   database = undefined;
 }
 
-module.exports = {
+export {
   closeDatabase,
   connectDatabase,
 };

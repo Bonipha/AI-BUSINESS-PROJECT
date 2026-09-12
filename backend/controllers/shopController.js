@@ -1,5 +1,5 @@
-const { ObjectId } = require('mongodb');
-const { connectDatabase } = require('../database');
+import { ObjectId } from 'mongodb';
+import { connectDatabase } from '../database.js';
 
 async function createShop({ name, ownerId, description = '', email = '', phone = '', address = '', logoUrl = '' }) {
   if (!name || !ownerId) throw new Error('Shop name and ownerId are required');
@@ -51,4 +51,4 @@ async function deleteShop(id) {
   return result.deletedCount === 1;
 }
 
-module.exports = { createShop, deleteShop, getShopById, listShops, updateShop };
+export { createShop, deleteShop, getShopById, listShops, updateShop };

@@ -67,7 +67,7 @@ function userCollectionOptions() {
   };
 }
 
-module.exports = {
+export {
   adminSchema,
   customerSchema,
   ownerSchema,

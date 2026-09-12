@@ -1,9 +1,11 @@
-const { ObjectId } = require('mongodb');
-const { connectDatabase } = require('../database');
+import { ObjectId } from 'mongodb';
+import { connectDatabase } from '../database.js';
+import { uploadImage } from './cloudinaryController.js';
 
-async function createProduct({ name, description = '', price, stock = 0, category = '', imageUrl = '' }) {
+async function createProduct({ name, description = '', price, stock = 0, category = '', imageUrl = '', image }) {
   if (!name || price === undefined) throw new Error('Product name and price are required');
   if (Number(price) < 0 || Number(stock) < 0) throw new Error('Price and stock cannot be negative');
+  if (image) imageUrl = (await uploadImage({ image, folder: 'ai-project/products' })).url;
 
   const product = {
     name,
@@ -33,6 +35,7 @@ async function getProductById(id) {
 
 async function updateProduct(id, updates) {
   const allowedFields = ['name', 'description', 'price', 'stock', 'category', 'imageUrl'];
+  if (updates.image) updates.imageUrl = (await uploadImage({ image: updates.image, folder: 'ai-project/products' })).url;
   const changes = Object.fromEntries(Object.entries(updates).filter(([key]) => allowedFields.includes(key)));
   if (changes.price !== undefined) changes.price = Number(changes.price);
   if (changes.stock !== undefined) changes.stock = Number(changes.stock);
@@ -49,4 +52,4 @@ async function deleteProduct(id) {
   return result.deletedCount === 1;
 }
 
-module.exports = { createProduct, deleteProduct, getProductById, listProducts, updateProduct };
+export { createProduct, deleteProduct, getProductById, listProducts, updateProduct };

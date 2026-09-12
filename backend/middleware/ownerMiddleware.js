@@ -10,4 +10,4 @@ function requireOwner(request, response, next) {
   return next();
 }
 
-module.exports = { requireOwner };
+export { requireOwner };

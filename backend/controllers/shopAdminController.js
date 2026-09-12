@@ -1,5 +1,5 @@
-const crypto = require('crypto');
-const { connectDatabase } = require('./database');
+import crypto from 'node:crypto';
+import { connectDatabase } from '../database.js';
 
 function hashPassword(password, salt = crypto.randomBytes(16).toString('hex')) {
   const hash = crypto.scryptSync(password, salt, 64).toString('hex');
@@ -39,7 +39,7 @@ async function findAdminByEmail(email) {
   return database.collection('admins').findOne({ email: email.trim().toLowerCase() });
 }
 
-module.exports = {
+export {
   createAdmin,
   findAdminByEmail,
   hashPassword,

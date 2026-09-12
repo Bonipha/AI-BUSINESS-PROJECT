@@ -1,6 +1,6 @@
-const crypto = require('crypto');
-const { connectDatabase } = require('./database');
-const { hashPassword } = require('./shopAdmin');
+import crypto from 'node:crypto';
+import { connectDatabase } from '../database.js';
+import { hashPassword } from './shopAdminController.js';
 
 async function createPasswordResetToken(email) {
   const database = await connectDatabase();
@@ -45,4 +45,4 @@ async function resetPassword(token, newPassword) {
   await database.collection('sessions').deleteMany({ adminId: reset.adminId });
 }
 
-module.exports = { createPasswordResetToken, resetPassword };
+export { createPasswordResetToken, resetPassword };

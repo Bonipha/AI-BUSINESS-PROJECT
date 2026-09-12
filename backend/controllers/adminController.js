@@ -1,5 +1,5 @@
-const { ObjectId } = require('mongodb');
-const { connectDatabase } = require('../database');
+import { ObjectId } from 'mongodb';
+import { connectDatabase } from '../database.js';
 
 async function listAdmins() {
   const database = await connectDatabase();
@@ -31,4 +31,4 @@ async function updateAdmin(id, updates) {
   return getAdminById(id);
 }
 
-module.exports = { getAdminById, listAdmins, updateAdmin };
+export { getAdminById, listAdmins, updateAdmin };
