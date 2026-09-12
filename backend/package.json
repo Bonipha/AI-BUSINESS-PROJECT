@@ -1,6 +1,9 @@
 {
   "type": "module",
   "dependencies": {
+    "@langchain/core": "^1.2.11",
+    "@langchain/langgraph": "^1.4.15",
+    "@langchain/openai": "^1.5.13",
     "bcryptjs": "^3.0.3",
     "better-auth": "^1.7.4",
     "cloudinary": "^2.11.0",

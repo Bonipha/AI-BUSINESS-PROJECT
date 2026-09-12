@@ -5,6 +5,48 @@ Marketplace application with separate frontend and backend folders.
 
 ---
 
+## AI Shopping Assistant
+
+The app includes an intelligent chat assistant powered by **LangChain** and **LangGraph**, with real-time access to the marketplace database.
+
+### How it works
+
+The assistant uses a **LangGraph ReAct agent** that reasons over user messages and decides which tools to call. Tools query MongoDB directly, so results are always live.
+
+| Tool | Triggered when user asks... |
+|---|---|
+| `search_products` | "find me a lamp", "show apparel under $50" |
+| `search_shops` | "what shops are available?", "find a shop in Dar es Salaam" |
+| `list_categories` | "what categories do you have?" |
+| `get_featured_products` | "what's new?", "show me what's available" |
+
+### Stack
+
+- `@langchain/core` — tool definitions and message types
+- `@langchain/openai` — GPT-4o-mini as the reasoning model
+- `@langchain/langgraph` — ReAct agent loop (reason → act → observe)
+
+### API Endpoint
+
+#### `POST /api/ai/chat`
+Send a conversation to the AI agent. Public endpoint.
+
+**Request Body:**
+```json
+{
+  "messages": [
+    { "role": "user", "content": "Show me products under $30" }
+  ]
+}
+```
+
+**Response `200`:**
+```json
+{ "reply": "Here are some products under $30: ..." }
+```
+
+---
+
 ## Backend API Documentation
 
 **Base URL:** `http://localhost:3000`

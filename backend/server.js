@@ -1,3 +1,4 @@
+import './env.js';
 import http from 'node:http';
 import { closeDatabase, connectDatabase } from './database.js';
 import { login, logout } from './controllers/authentication.js';

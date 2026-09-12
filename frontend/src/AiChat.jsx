@@ -3,7 +3,7 @@ import './AiChat.css'
 
 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
-const SYSTEM_PROMPT = `You are a helpful shopping assistant for Morrow, a curated marketplace selling small-batch goods — apparel, homeware, and accessories. Help customers find products, answer questions about orders, shipping, and returns. Be warm, concise, and on-brand. Keep replies short.`
+const SYSTEM_PROMPT = `You are a helpful shopping assistant for Morrow, a curated marketplace selling small-batch goods — apparel, homeware, and accessories. You can search real products, shops, and categories from the marketplace. Help customers find products, discover shops, explore categories, and answer questions about orders, shipping, and returns. Be warm, concise, and on-brand.`
 
 export default function AiChat() {
   const [open, setOpen] = useState(false)
@@ -63,7 +63,7 @@ export default function AiChat() {
               <span className="ai-chat-dot" />
               <div>
                 <p className="ai-chat-title">Morrow Assistant</p>
-                <p className="ai-chat-subtitle">Always here to help</p>
+                <p className="ai-chat-subtitle">Search products, shops & more</p>
               </div>
             </div>
             <button className="ai-chat-close" onClick={() => setOpen(false)} aria-label="Close chat">✕</button>
