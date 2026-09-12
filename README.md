@@ -549,3 +549,181 @@ All errors return a JSON body with an `error` field:
 | `customer` | Register, login, manage own profile                      |
 | `owner`    | All customer permissions + manage shops & products       |
 | `admin`    | Full access to all resources                             |
+
+---
+
+## Owner — Product Management
+
+> All endpoints require owner role. Owners can only edit products they own.
+
+### `PATCH /api/owner/products/:id`
+Update an owned product. Emits a `low_stock` socket event if stock falls at or below the threshold after update.
+
+**Request Body** (any of):
+```json
+{
+  "name": "",
+  "description": "",
+  "price": 0,
+  "stock": 0,
+  "category": "",
+  "imageUrl": "",
+  "image": "<base64_string | data_url | image_url>",
+  "lowStockThreshold": 10
+}
+```
+
+**Response `200`:** Updated product object.
+
+---
+
+### `GET /api/owner/products/:id/stock`
+Get current stock level and low-stock status for a product.
+
+**Response `200`:**
+```json
+{
+  "productId": "<product_id>",
+  "name": "Product Name",
+  "stock": 5,
+  "lowStockThreshold": 10,
+  "isLow": true
+}
+```
+
+---
+
+### `PATCH /api/owner/products/:id/stock/threshold`
+Set the low-stock alert threshold for a product.
+
+**Request Body:**
+```json
+{ "threshold": 10 }
+```
+
+**Response `200`:** Updated product object.
+
+---
+
+## Owner — Dashboard
+
+> All endpoints require owner role.
+
+### `GET /api/owner/customers`
+List all registered customers.
+
+**Response `200`:** Array of customer user objects (no password fields).
+
+---
+
+### `GET /api/owner/shops/:shopId/marketing`
+Get the marketing profile for a shop.
+
+**Response `200`:**
+```json
+{
+  "shopId": "<shop_id>",
+  "headline": "",
+  "promoText": "",
+  "discountPercent": 0,
+  "featuredProductIds": [],
+  "campaignBannerUrl": "",
+  "campaignEndsAt": ""
+}
+```
+
+---
+
+### `PUT /api/owner/shops/:shopId/marketing`
+Create or update the marketing profile for a shop.
+
+**Request Body:**
+```json
+{
+  "headline": "Summer Sale!",
+  "promoText": "Up to 50% off selected items",
+  "discountPercent": 20,
+  "featuredProductIds": ["<product_id>"],
+  "campaignBannerUrl": "https://example.com/banner.jpg",
+  "campaignEndsAt": "2025-12-31T23:59:59Z"
+}
+```
+
+**Response `200`:** Updated marketing object.
+
+---
+
+## Admin — Shop Owners
+
+> All endpoints require admin role.
+
+### `GET /api/admin/shop-owners`
+List all shop owners.
+
+**Response `200`:** Array of owner user objects (no password fields).
+
+---
+
+### `GET /api/admin/shop-owners/:id`
+Get a shop owner by ID.
+
+**Response `200`:** Owner user object.
+
+---
+
+### `DELETE /api/admin/shop-owners/:id`
+Delete a shop owner account.
+
+**Response `200`:**
+```json
+{ "deleted": true }
+```
+
+---
+
+## Admin — All Shops
+
+### `GET /api/admin/shops`
+List all shops with their owner details. Requires admin role.
+
+**Response `200`:**
+```json
+[
+  {
+    "_id": "<shop_id>",
+    "name": "My Shop",
+    "ownerId": "<user_id>",
+    "status": "active",
+    "owner": { "_id": "", "name": "", "email": "" }
+  }
+]
+```
+
+---
+
+## Real-Time — Socket.io
+
+Connect to the server via Socket.io at `http://localhost:3000`.
+
+### Event: `low_stock`
+Emitted to all connected clients when a product's stock is at or below its `lowStockThreshold` after an update.
+
+**Payload:**
+```json
+{
+  "productId": "<product_id>",
+  "name": "Product Name",
+  "stock": 3,
+  "threshold": 10
+}
+```
+
+**Frontend example:**
+```js
+import { io } from 'socket.io-client';
+
+const socket = io('http://localhost:3000');
+socket.on('low_stock', (data) => {
+  console.warn(`Low stock alert: ${data.name} has only ${data.stock} left`);
+});
+```

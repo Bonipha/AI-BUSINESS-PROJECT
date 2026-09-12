@@ -4,6 +4,7 @@ import { login, logout } from './controllers/authentication.js';
 import { toNodeHandler } from 'better-auth/node';
 import { auth } from './auth.js';
 import { handleRoutes } from './routes/index.js';
+import { initSocket } from './socket.js';
 
 const port = Number(process.env.PORT) || 3000;
 
@@ -17,11 +18,12 @@ function readRequestBody(request) {
 }
 
 const server = http.createServer(async (request, response) => {
+  response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
   response.setHeader('Content-Type', 'application/json');
   response.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND_URL || 'http://localhost:5173');
   response.setHeader('Access-Control-Allow-Credentials', 'true');
   response.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  response.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+
   if (request.method === 'OPTIONS') {
     response.writeHead(204);
     response.end();
@@ -79,6 +81,8 @@ const server = http.createServer(async (request, response) => {
   response.writeHead(404);
   response.end(JSON.stringify({ error: 'Route not found' }));
 });
+
+initSocket(server);
 
 server.listen(port, () => {
   console.log(`Server listening on http://localhost:${port}`);
